@@ -40,9 +40,9 @@ class layer:
         for output_ic in range(len(outputs)): outputs[output_ic] = sigmoid(outputs[output_ic])
         self.output = outputs
 
-    def train_layer(self, desired_output):
+    def train_layer(self, desired_outputs):
         for forward_connection in range(self.forward_connections):
-            error = desired_output[forward_connection] - self.output[forward_connection]
+            error = desired_outputs[forward_connection] - self.output[forward_connection]
             adjustments = error * sigmoid_gradient(self.output[forward_connection])
 
             for neuron_ic in range(len(self.neurons)):
