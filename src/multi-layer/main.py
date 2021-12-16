@@ -1,10 +1,10 @@
 import matplotlib
 import random
 import json
-import math
+import numpy as np
 
 ####    FUNCTIONS    ####
-def sigmoid(x): return 1/(1+math.exp(-x))
+def sigmoid(x): return 1/(1+np.exp(-x))
 #This value x must have been run through the sigmoid function first!
 def sigmoid_gradient(x): return x * (1 - x)
 
@@ -17,8 +17,7 @@ def matrix_maths(A, B, operator):
     output = []
     if len(A) == len(B):
         for ic in range(len(A)): output.append(eval(f"{A[ic]} {operator} {B[ic]}"))
-    return output
-
+    return output       
 #### END OF FUNCTIONS ####
 
 
@@ -63,7 +62,7 @@ class network:
 
     def back_propagation(self, iterations):
         for iteration in range(iterations):
-
+            print(f"Iteration {iteration}")
             for training_set in self.training_data:
                 current_set = self.training_data[training_set]
 
@@ -74,13 +73,38 @@ class network:
 
                 for layer in reversed(self.network_layers[1::]):
                     error = matrix_maths(training_outputs, layer.outputs, "-")
+                    inputs = layer.neurons
+                    outputs= layer.outputs
+
+                    adjustments = []
+                    for output_ic in range(len(outputs)): adjustments.append(outputs[output_ic] * error[output_ic])
+
+                    for forward_connection in range(layer.forward_count):
+                        for neuron_connection in range(layer.neuron_count):
+                            layer.weights[forward_connection][neuron_connection] += inputs[neuron_connection] * adjustments[forward_connection]
                     
+                    new_outputs = []
+                    for neuron_ic in range(len(layer.neurons)):
+                        new_outputs.append(0)
+                        for output_ic in range(len(training_outputs)):
+                            new_outputs[neuron_ic] += layer.weights[output_ic][neuron_ic] * training_outputs[output_ic]
+                    
+                    for i in range(len(new_outputs)):
+                        new_outputs[i] = sigmoid(new_outputs[i])
+
+                    training_outputs = new_outputs
 
     def load_training_data(self, path):
         self.training_data = json.load(open(path, "r"))
 
 
 if __name__ == "__main__":
-    NN = network([4,8,8,6,2])
+    NN = network([4,8,8,2])
     NN.load_training_data("training_data.json")
-    NN.back_propagation(1)
+    NN.back_propagation(1000)
+    
+    t = NN.feed_forward([1,0,0,0])
+    print(t)
+
+    t = NN.feed_forward([0,0,1,1])
+    print(t)
