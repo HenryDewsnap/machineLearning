@@ -1,4 +1,4 @@
-import matplotlib
+from pprint import pprint
 import random
 import json
 import numpy as np
@@ -99,12 +99,13 @@ class network:
 
 
 if __name__ == "__main__":
-    NN = network([4,8,8,2])
+    NN = network([4, 16, 16, 2])
     NN.load_training_data("training_data.json")
-    NN.back_propagation(1000)
-    
-    t = NN.feed_forward([1,0,0,0])
-    print(t)
+    NN.back_propagation(20000)
 
-    t = NN.feed_forward([0,0,1,1])
-    print(t)
+    while True:
+        current_data = []
+        for i in range(4):
+            current_data.append(int(input(f"{i}: ")))
+
+        print(f"Output: {NN.feed_forward(current_data)}")
