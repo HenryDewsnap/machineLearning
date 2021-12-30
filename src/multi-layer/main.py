@@ -77,7 +77,7 @@ class network:
                     outputs= layer.outputs
 
                     adjustments = []
-                    for output_ic in range(len(outputs)): adjustments.append(outputs[output_ic] * error[output_ic])
+                    for output_ic in range(len(outputs)): adjustments.append(sigmoid_gradient(outputs[output_ic] * error[output_ic]))
 
                     for forward_connection in range(layer.forward_count):
                         for neuron_connection in range(layer.neuron_count):
